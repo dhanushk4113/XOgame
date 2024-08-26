@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-image: url('tic.png');
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 5px;
+      background-color: #ddd;
+      padding: 5px;
+    }
+
+    .square {
+      width: 100px;
+      height: 100px;
+      background-color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      cursor: pointer;
+    }
+
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .popup-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    #rematch {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    #turn {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: red;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #ddd;
+      padding: 10px 0;
+      text-align: center;
+    }
+
+    nav {
+      width: 100%;
+      background-color: #333;
+      padding: 10px 0;
+      color: white;
+    }
+
+    nav ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    nav ul li {
+      margin: 0 10px;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Tic Tac Toe</h1>
+  <div class="board">
+    <div class="square" data-index="0"></div>
+    <div class="square" data-index="1"></div>
+    <div class="square" data-index="2"></div>
+    <div class="square" data-index="3"></div>
+    <div class="square" data-index="4"></div>
+    <div class="square" data-index="5"></div>
+    <div class="square" data-index="6"></div>
+    <div class="square" data-index="7"></div>
+    <div class="square" data-index="8"></div>
+  </div>
+</div>
+
+<div class="popup">
+  <div class="popup-content">
+    <h2 id="popup-text"></h2>
+    <button id="rematch">Rematch</button>
+  </div>
+</div>
+
+<div id="turn">Current Turn: X</div>
+<div style="padding: 20px;">
+  
+</div>
+
+<div></div>
+
+<footer>
+  <p>&#169; 2024 Tic Tac Toe</p>
+</footer>
+
+<script>
+  const squares = document.querySelectorAll('.square');
+  const popup = document.querySelector('.popup');
+  const popupText = document.getElementById('popup-text');
+  const rematchButton = document.getElementById('rematch');
+  const turnDisplay = document.getElementById('turn');
+
+  let currentPlayer = 'X';
+  let gameBoard = ['', '', '', '', '', '', '', '', ''];
+  let gameOver = false;
+
+  function checkWinner() {
+    const winningCombos = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
+    ];
+
+    for (let combo of winningCombos) {
+      const [a, b, c] = combo;
+      if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+        return gameBoard[a];
+      }
+    }
+
+    return null;
+  }
+
+  function checkDraw() {
+    return !gameBoard.includes('');
+  }
+
+  function handleClick(e) {
+    const index = e.target.dataset.index;
+    if (gameBoard[index] || gameOver) return;
+
+    gameBoard[index] = currentPlayer;
+    e.target.textContent = currentPlayer;
+
+    const winner = checkWinner();
+    if (winner) {
+      popupText.textContent = `${winner} wins!`;
+      popup.style.display = 'flex';
+      gameOver = true;
+    } else if (checkDraw()) {
+      popupText.textContent = 'It\'s a draw!';
+      popup.style.display = 'flex';
+      gameOver = true;
+    } else {
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      turnDisplay.textContent = `Current Turn: ${currentPlayer}`;
+    }
+  }
+
+  function restartGame() {
+    squares.forEach(square => {
+      square.textContent = '';
+    });
+
+    currentPlayer = 'X';
+    gameBoard = ['', '', '', '', '', '', '', '', ''];
+    gameOver = false;
+    popup.style.display = 'none';
+    turnDisplay.textContent = `Current Turn: ${currentPlayer}`;
+  }
+
+  squares.forEach(square => {
+    square.addEventListener('click', handleClick);
+  });
+
+  rematchButton.addEventListener('click', restartGame);
+</script>
+</body>
+</html>
